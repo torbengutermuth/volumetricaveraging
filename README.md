@@ -7,7 +7,14 @@ be shown as dummy-atoms in a PDB file or in the [GridDataFormat](https://griddat
 Both File Formats are readable with current molecular viewers like [ChimeraX](https://www.cgl.ucsf.edu/chimerax/)
 or [Pymol](https://pymol.org/2/).
 
-## Set up your own environment with conda
+## Installation 
+The Software was developed and tested on Ubuntu 20.04.2 LTS und should be runnable on any standard computer.
+The hardware requirements are dependent on the grid size chosen and the author recommends to not use 
+grid sizes below 0.4 Angstroem. 
+The install time is fully dependent on anaconda, to install the software you just have to download
+the repository.
+
+### Set up your own environment with conda
 The repository contains a file named `scooder_dev.yml`. It specifies all requirements for the
 *conda* environment to run the provided code.
 
@@ -38,17 +45,22 @@ in the volumetric averaging directory.
 ## Usage Examples
 There are three different modes for the volumetric averaging software, query, nosc and analysis.
 In addition to the description of all options in the Command Line Interface, usage examples for the
-different modes are provided.
+different modes are provided. 
+An SD File for trying out these usage examples can be found in the testdata directory.
 ### Query
 The query mode allows to directly calculate the grids/densities corresponding to a docking (SD File).
 To use it an SD File has to be specified as well as the grid size, features and the wanted output.
 Using the command line call below, the PDBs and densities of all features in the extended feature
 list are calculated for a grid size of 0.5 Angstroem.
+This calculation should take a couple seconds and a folder will be created containing the calculated
+PDBs/densities.
 ```bash
 python /pathtovolav/VolumetricAveraging.py query -f 05_moe_prepared.sdf --features extended -g 0.5 --pdb --density
 ```
 The nosc mode allows to only calculate the grids that are necessary for calculating the PDBs and densities.
 These grids are saved to disk so they can be analysed at a later time.
+This calculation should take a couple seconds and a folder will be created containing the calculated
+grids in the npy format including a json with settings.
 ```bash
 python /pathtovolav/VolumetricAveraging.py nosc -f 05_moe_prepared.sdf -g 0.5 --features extended
 ```
@@ -56,6 +68,8 @@ The analysis mode allows to calculate the PDBs and densities for prior nosc runs
 This is especially useful to combine the grids of multiple different docking runs, 
 saving the time to tediously combine SDFs to analyse subsets of all docking runs conducted.
 To combine nosc runs for multiple Dockings, both the features and the grid size used must be identical.
+This calculation should take a couple seconds and a folder will be created containing the calculated
+PDBs/densities.
 ```bash
 python /pathtovolav/VolumetricAveraging.py analysis --folders 05_moe_prepared --pdb --density
 ```
