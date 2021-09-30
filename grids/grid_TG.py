@@ -1,12 +1,13 @@
-import os
-import numpy as np
 import itertools
-import math
-from gridData import Grid as grid_alt
 import logging
+import math
+import os
+
+import numpy as np
+from gridData import Grid as grid_alt
 
 
-class GRID:
+class Grid:
     def __init__(self, id_string, data_grid_pre, size_gridspace, stauch):
         """
         initializes grid with necessary information
@@ -18,8 +19,8 @@ class GRID:
         data_grid = data_grid_pre.copy()
         self.id_string = str(id_string)
         self.loggingname = "grid_" + self.id_string
-        self.logger = logging.getLogger("SCOODER." + self.loggingname)
-        self.logger.info(self.loggingname + " of SCOODER was started")
+        self.logger = logging.getLogger("grids." + self.loggingname)
+        self.logger.info(self.loggingname + " of grids was started")
         blub = 6 + 12 * (1 / math.sqrt(2)) + 8 * (1 / math.sqrt(3))
         if stauch < 0 or stauch > 1:
             self.logger.error("Stauch factor not between 0 and 1 but:" + str(stauch))
@@ -121,7 +122,7 @@ class GRID:
             c = c - 1
             if abs(a) + abs(b) + abs(c) == 0:
                 self.data[coord1][coord2][coord3] = (
-                        self.data[coord1][coord2][coord3] + self.value_alter
+                    self.data[coord1][coord2][coord3] + self.value_alter
                 )
             elif abs(a) + abs(b) + abs(c) == 1:
                 if (coord1 + a) < 0 or (coord2 + b) < 0 or (coord3 + c) < 0:
@@ -141,9 +142,9 @@ class GRID:
                     )
                     continue
                 elif (
-                        (coord1 + a) >= self.num_spaces_x
-                        or (coord2 + b) >= self.num_spaces_y
-                        or (coord3 + c) >= self.num_spaces_z
+                    (coord1 + a) >= self.num_spaces_x
+                    or (coord2 + b) >= self.num_spaces_y
+                    or (coord3 + c) >= self.num_spaces_z
                 ):
                     self.logger.warning(
                         "Gridnumber too high "
@@ -162,8 +163,8 @@ class GRID:
                     continue
                 else:
                     self.data[coord1 + a][coord2 + b][coord3 + c] = (
-                            self.data[coord1 + a][coord2 + b][coord3 + c]
-                            + self.value_alter * self.stauch * 1
+                        self.data[coord1 + a][coord2 + b][coord3 + c]
+                        + self.value_alter * self.stauch * 1
                     )
             elif abs(a) + abs(b) + abs(c) == 2:
                 if (coord1 + a) < 0 or (coord2 + b) < 0 or (coord3 + c) < 0:
@@ -183,9 +184,9 @@ class GRID:
                     )
                     continue
                 elif (
-                        (coord1 + a) >= self.num_spaces_x
-                        or (coord2 + b) >= self.num_spaces_y
-                        or (coord3 + c) >= self.num_spaces_z
+                    (coord1 + a) >= self.num_spaces_x
+                    or (coord2 + b) >= self.num_spaces_y
+                    or (coord3 + c) >= self.num_spaces_z
                 ):
                     self.logger.warning(
                         "Gridnumber too high "
@@ -204,11 +205,10 @@ class GRID:
                     continue
                 else:
                     self.data[coord1 + a][coord2 + b][coord3 + c] = self.data[
-                                                                        coord1 + a
-                                                                        ][coord2 + b][
-                                                                        coord3 + c] + self.value_alter * self.stauch * (
-                                                                            1 / math.sqrt(2)
-                                                                    )
+                        coord1 + a
+                    ][coord2 + b][coord3 + c] + self.value_alter * self.stauch * (
+                        1 / math.sqrt(2)
+                    )
             elif abs(a) + abs(b) + abs(c) == 3:
                 if (coord1 + a) < 0 or (coord2 + b) < 0 or (coord3 + c) < 0:
                     self.logger.warning(
@@ -227,9 +227,9 @@ class GRID:
                     )
                     continue
                 elif (
-                        (coord1 + a) >= self.num_spaces_x
-                        or (coord2 + b) >= self.num_spaces_y
-                        or (coord3 + c) >= self.num_spaces_z
+                    (coord1 + a) >= self.num_spaces_x
+                    or (coord2 + b) >= self.num_spaces_y
+                    or (coord3 + c) >= self.num_spaces_z
                 ):
                     self.logger.warning(
                         "Gridnumber too high "
@@ -248,11 +248,10 @@ class GRID:
                     continue
                 else:
                     self.data[coord1 + a][coord2 + b][coord3 + c] = self.data[
-                                                                        coord1 + a
-                                                                        ][coord2 + b][
-                                                                        coord3 + c] + self.value_alter * self.stauch * (
-                                                                            1 / math.sqrt(3)
-                                                                    )
+                        coord1 + a
+                    ][coord2 + b][coord3 + c] + self.value_alter * self.stauch * (
+                        1 / math.sqrt(3)
+                    )
 
     def sum_grid(self):
         """
@@ -294,19 +293,19 @@ class GRID:
             hit = array_sorted[-count_gridspaces]
             coordinate = np.where(grid_temp == hit)
             x = (
-                    coordinate[0] * self.size_gridspace
-                    + self.min_x
-                    + 0.5 * self.size_gridspace
+                coordinate[0] * self.size_gridspace
+                + self.min_x
+                + 0.5 * self.size_gridspace
             )  # Here 0.5 Gridspaces are added to adjust for
             y = (
-                    coordinate[1] * self.size_gridspace
-                    + self.min_y
-                    + 0.5 * self.size_gridspace
+                coordinate[1] * self.size_gridspace
+                + self.min_y
+                + 0.5 * self.size_gridspace
             )
             z = (
-                    coordinate[2] * self.size_gridspace
-                    + self.min_z
-                    + 0.5 * self.size_gridspace
+                coordinate[2] * self.size_gridspace
+                + self.min_z
+                + 0.5 * self.size_gridspace
             )  # To correct from the start of the space to the middle
             coordinates_trans = [x, y, z]
             list_coordinates.append(coordinates_trans)
@@ -341,7 +340,6 @@ class GRID:
                 counter = counter + 1
                 final_pdb = final_pdb + pdb_line
         tosave = self.id_string + str(int(cutoff_perc * 100)) + ".pdb"
-        print(tosave)
         if os.path.exists(tosave):
             os.remove(tosave)
         f = open(tosave, "w")
@@ -366,12 +364,12 @@ class GRID:
         """
         self.logger.debug("subtract grid function called")
         if (
-                self.min_x == other_grid.min_x
-                and self.max_x == other_grid.max_x
-                and self.max_y == other_grid.max_y
-                and self.min_y == other_grid.min_y
-                and self.max_z == other_grid.max_z
-                and self.min_z == other_grid.min_z
+            self.min_x == other_grid.min_x
+            and self.max_x == other_grid.max_x
+            and self.max_y == other_grid.max_y
+            and self.min_y == other_grid.min_y
+            and self.max_z == other_grid.max_z
+            and self.min_z == other_grid.min_z
         ):
             sum_a = self.sum_grid()
             sum_b = other_grid.sum_grid()

@@ -1,10 +1,12 @@
-import math
-import numpy as np
-from grid_TG import GRID
 import logging
+import math
+
+import numpy as np
+
+from grids.grid_TG import Grid
 
 
-class GRIDDATA(GRID):
+class GridData(Grid):
     def __init__(self, min_x, min_y, min_z, max_x, max_y, max_z, gridsize, id_string):
         """
         This function initiates the grid_Data class
@@ -19,8 +21,8 @@ class GRIDDATA(GRID):
         """
         self.id_string = id_string
         self.loggingname = "griddata_" + self.id_string
-        self.logger = logging.getLogger("SCOODER." + self.loggingname)
-        self.logger.info(self.loggingname + " of SCOODER was started")
+        self.logger = logging.getLogger("grids." + self.loggingname)
+        self.logger.info(self.loggingname + " of grids was started")
         self.size_gridspace = gridsize
         self.min_x = min_x
         self.min_y = min_y

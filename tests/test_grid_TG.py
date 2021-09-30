@@ -1,14 +1,22 @@
 from unittest import TestCase
-from grid_TG import GRID
+from grids.grid_TG import Grid
 import pandas as pd
 import numpy as np
 import os
 
 
-class Testgrid(TestCase):
+class TestGrid(TestCase):
+    def setUp(self):
+        self.start = os.path.dirname(os.path.dirname(__file__))
+        self.random_data = pd.read_csv(
+            os.path.join(self.start, "testfiles", "random_data_raw_input.csv")
+        )
+        self.moe_prepared = pd.read_csv(
+            os.path.join(self.start, "testfiles", "05_moe_prepared_raw_input.csv")
+        )
+
     def test_init(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         self.assertAlmostEqual(-20.499698309826396, random.min_x)
         self.assertAlmostEqual(-20.499953189332818, random.min_y)
         self.assertAlmostEqual(-20.49996776362234, random.min_z)
@@ -21,8 +29,7 @@ class Testgrid(TestCase):
         self.assertEqual(83, random.num_spaces_x)
         self.assertEqual(83, random.num_spaces_y)
         self.assertEqual(83, random.num_spaces_z)
-        moe_prepared_data = pd.read_csv("./testfiles/05_moe_prepared_raw_input.csv")
-        moe_prepared = GRID("05_moe_prepared", moe_prepared_data, 0.5, 0.2617)
+        moe_prepared = Grid("05_moe_prepared", self.moe_prepared, 0.5, 0.2617)
         self.assertAlmostEqual(-1.009, moe_prepared.min_x)
         self.assertAlmostEqual(-3.8489999999999998, moe_prepared.min_y)
         self.assertAlmostEqual(46.37, moe_prepared.min_z)
@@ -36,15 +43,14 @@ class Testgrid(TestCase):
         self.assertEqual(40, moe_prepared.num_spaces_y)
         self.assertEqual(38, moe_prepared.num_spaces_z)
         with self.assertRaises(RuntimeError):
-            GRID("fail", random_data, 0, 0.2617)
+            Grid("fail", self.random_data, 0, 0.2617)
         with self.assertRaises(RuntimeError):
-            GRID("fail", random_data, 0.5, -10)
+            Grid("fail", self.random_data, 0.5, -10)
         with self.assertRaises(RuntimeError):
-            GRID("fail", random_data, 0.5, 10)
+            Grid("fail", self.random_data, 0.5, 10)
 
     def test_alter_grid(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         random.alter_grid(10, 10, 10)
         self.assertEqual(1, np.sum(random.data))
         random.alter_grid(20, 20, 20)
@@ -61,8 +67,7 @@ class Testgrid(TestCase):
             random.alter_grid(2323, 23123, 12312)
 
     def test_sum_grid(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         self.assertEqual(0, random.sum_grid())
         random.alter_grid(20, 20, 20)
         self.assertAlmostEqual(1, random.sum_grid())
@@ -78,8 +83,7 @@ class Testgrid(TestCase):
         self.assertAlmostEqual(4.693271107889538, random.sum_grid())
 
     def test_max_grid(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         self.assertEqual(0, random.max_grid())
         random.alter_grid(20, 20, 20)
         self.assertAlmostEqual(0.16667948267393465, random.max_grid())
@@ -95,8 +99,7 @@ class Testgrid(TestCase):
         self.assertAlmostEqual(0.5504065093109461, random.max_grid())
 
     def test_save_pdb(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         random.alter_grid(1, 1, 1)
         for i in range(1, 10):
             random.save_PDB(float(i) / 10)
@@ -105,9 +108,8 @@ class Testgrid(TestCase):
             os.remove(name)
 
     def test_subtract_grid(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random_a = GRID("randoma", random_data, 0.5, 0.2617)
-        random_b = GRID("randomb", random_data, 0.5, 0.2617)
+        random_a = Grid("randoma", self.random_data, 0.5, 0.2617)
+        random_b = Grid("randomb", self.random_data, 0.5, 0.2617)
         for i in range(1, 60):
             random_a.alter_grid(i, i, i)
             random_b.alter_grid(1, 1, i)
@@ -116,8 +118,7 @@ class Testgrid(TestCase):
         self.assertAlmostEqual(0.253919523905472, random_a.max_grid())
 
     def test_euclidian_type_distance(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         self.assertEqual(0, random.euclidian_type_distance())
         random.alter_grid(1, 1, 1)
         self.assertEqual(0.23598391369486413, random.euclidian_type_distance())
@@ -129,8 +130,7 @@ class Testgrid(TestCase):
         self.assertEqual(0.9439356547794565, random.euclidian_type_distance())
 
     def test_volume_used(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         self.assertEqual(0, random.volume_used())
         j = 1
         for i in range(1, 70, 3):
@@ -139,16 +139,13 @@ class Testgrid(TestCase):
             j = j + 1
 
     def test_volume_used_cube(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         self.assertEqual(71473.375, random.volume_cube())
-        moe_prepared_data = pd.read_csv("./testfiles/05_moe_prepared_raw_input.csv")
-        moe_prepared = GRID("05_moe_prepared", moe_prepared_data, 0.5, 0.2617)
+        moe_prepared = Grid("05_moe_prepared", self.moe_prepared, 0.5, 0.2617)
         self.assertEqual(4180.0, moe_prepared.volume_cube())
 
     def test_indeces_nonzero(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         self.assertEqual(0, len(random.indeces_nonzero()))
         random.alter_grid(1, 1, 1)
         self.assertEqual(27, len(random.indeces_nonzero()))
@@ -158,8 +155,7 @@ class Testgrid(TestCase):
         self.assertEqual(36, len(random.indeces_nonzero()))
 
     def test_multiply_by_value(self):
-        random_data = pd.read_csv("./testfiles/random_data_raw_input.csv")
-        random = GRID("random", random_data, 0.5, 0.2617)
+        random = Grid("random", self.random_data, 0.5, 0.2617)
         random.alter_grid(1, 1, 1)
         self.assertEqual(1, random.sum_grid())
         random.multiply_by_value(3)

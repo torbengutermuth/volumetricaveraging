@@ -1,20 +1,22 @@
-from rdkit import Chem
-import pandas as pd
-import numpy as np
-import os
 import argparse
+import json
 import logging
 import math
-from grid_TG import GRID
-import json
+import os
 import pathlib
 import random
-from grid_datareadin import GRIDDATA
+
+import numpy as np
+import pandas as pd
+from rdkit import Chem
+
+from grids.grid_TG import Grid
+from grids.grid_datareadin import GridData
 
 
-class SCOODER:
+class VolumetricAveraging:
     def __init__(self, args):
-        self.logger = logging.getLogger("SCOODER")
+        self.logger = logging.getLogger("grids")
         self.arguments = args
         self.modus = self.arguments["modus"]
         self.path = pathlib.Path(__file__).parent.absolute()
@@ -73,7 +75,7 @@ class SCOODER:
         :return:
         """
         self.logger.debug("read_features function called")
-        f = open(os.path.join(self.path, "feature_dictionaries.json"))
+        f = open(os.path.join(self.path, "grids", "feature_dictionaries.json"))
         data = json.load(f)
         f.close()
         features_used = {}
@@ -266,7 +268,7 @@ class SCOODER:
 
             name_grid = str(j) + "grid"
 
-            grid_conversion = GRID(
+            grid_conversion = Grid(
                 name_grid, features_processed, self.size_gridspace, self.stauch
             )
             for index, row in color_df.iterrows():
@@ -410,7 +412,7 @@ class SCOODER:
         self.logger.debug("combine_dockings function called")
         grid_dictionary = {}
         for feature in self.dic_features:
-            grid_dictionary[feature] = GRIDDATA(
+            grid_dictionary[feature] = GridData(
                 self.max_values["min_x"],
                 self.max_values["min_y"],
                 self.max_values["min_z"],
@@ -482,15 +484,15 @@ class SCOODER:
 def main():
     args = parser.parse_args()
     args_dict = vars(args)
-    Herbert = SCOODER(args_dict)
+    Herbert = VolumetricAveraging(args_dict)
     Herbert.run()
 
 
 if __name__ == "__main__":
     # Parser and subparser added
-    parser = argparse.ArgumentParser(description="Provide settings for SCOODER")
+    parser = argparse.ArgumentParser(description="Provide settings for grids")
     subparsers = parser.add_subparsers(
-        dest="modus", help="Different Modes of operation for SCOODER"
+        dest="modus", help="Different Modes of operation for grids"
     )
     # Nosc Mode
     parser_nosc = subparsers.add_parser(
@@ -522,10 +524,20 @@ if __name__ == "__main__":
         help="The names of the folders on which analysis shall be performed",
         required=True,
     )
-    parser_analysis.add_argument("--pdb", action="store_true")
-    parser_analysis.add_argument("--density", action="store_true")
-    parser_analysis.add_argument("--norm_max", action="store_true")
-    parser_analysis.add_argument("--norm_sum", action="store_true")
+    parser_analysis.add_argument(
+        "--pdb", action="store_true", help="Save calculated information as PDB"
+    )
+    parser_analysis.add_argument(
+        "--density",
+        action="store_true",
+        help="Save calculated information as densities",
+    )
+    parser_analysis.add_argument(
+        "--norm_max", action="store_true", help="Normalize the grid by its max"
+    )
+    parser_analysis.add_argument(
+        "--norm_sum", action="store_true", help="Normalize the grid by its sum"
+    )
     parser_analysis.add_argument(
         "--norm_manual",
         type=float,
@@ -551,10 +563,20 @@ if __name__ == "__main__":
         help="Gridsize as float in Angstroem",
         required=True,
     )
-    parser_query.add_argument("--pdb", action="store_true")
-    parser_query.add_argument("--density", action="store_true")
-    parser_query.add_argument("--norm_max", action="store_true")
-    parser_query.add_argument("--norm_sum", action="store_true")
+    parser_query.add_argument(
+        "--pdb", action="store_true", help="Save calculated information as PDB"
+    )
+    parser_query.add_argument(
+        "--density",
+        action="store_true",
+        help="Save calculated information as densities",
+    )
+    parser_query.add_argument(
+        "--norm_max", action="store_true", help="Normalize the grid by its maximum"
+    )
+    parser_query.add_argument(
+        "--norm_sum", action="store_true", help="Normalize the grid by its sum"
+    )
     parser_query.add_argument(
         "--norm_manual",
         type=float,
