@@ -57,6 +57,7 @@ PDBs/densities.
 ```bash
 python /pathtovolav/VolumetricAveraging.py query -f 05_moe_prepared.sdf --features extended -g 0.5 --pdb --density
 ```
+### Nosc
 The nosc mode enables a user to only calculate the grids that are necessary for calculating the PDBs and densities.
 These grids are saved to disk so they can be analysed at a later time.
 This calculation should take a couple seconds and a folder will be created containing the calculated
@@ -64,6 +65,7 @@ grids in the npy format including a json with settings.
 ```bash
 python /pathtovolav/VolumetricAveraging.py nosc -f 05_moe_prepared.sdf -g 0.5 --features extended
 ```
+### Analysis
 The analysis mode allows a user to calculate the PDBs and densities for prior nosc runs. 
 This is especially useful to combine the grids of multiple different docking runs, 
 saving the time to tediously combine SDFs to analyse subsets of all docking runs conducted.
